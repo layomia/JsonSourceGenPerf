@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <_TrimmerDumpDependencies>true</_TrimmerDumpDependencies>
+    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  <_ExtraTrimmerArgs>--feature System.Text.Json.DisableJsonSerializerDynamicFallback true</_ExtraTrimmerArgs>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
+
+    <!-- Root --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Components.WebAssembly.dll" />
+
+    --><!-- Microsoft.AspNetCore.Components.Web --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Components.Web.dll" />
+
+    --><!-- Microsoft.AspNetCore.Components --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Components.dll" />
+
+    --><!-- Microsoft.AspNetCore.Authorization --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Authorization.dll" />
+
+    --><!-- Microsoft.AspNetCore.Metadata --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Metadata.dll" />
+
+    --><!-- Microsoft.AspNetCore.Components.Analyzers --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Components.Analyzers.dll" />
+
+    --><!-- Microsoft.AspNetCore.Components.Forms --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.AspNetCore.Components.Forms.dll" />
+
+    --><!-- Microsoft.JSInterop.WebAssembly --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.JSInterop.WebAssembly.dll" />
+
+    --><!-- Microsoft.JSInterop --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.JSInterop.dll" />
+    
+    --><!-- Microsoft.Extensions.Configuration --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.Extensions.Configuration.dll" />
+
+    --><!-- Microsoft.Extensions.DependencyInjection.Abstractions --><!--
+    <Reference Include=".\UpdatedBlazorAssemblies\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.0-preview.2.21102.3" />
+  </ItemGroup>
+
+  <Target Name="ConfigureTrimming" BeforeTargets="PrepareForILLink">
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Text.Json' or '%(Filename)' == 'System.Net.Http.Json'">
+        <IsTrimmable>true</IsTrimmable>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="FixIncrementalCoreCompileWithAnalyzers" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <CustomAdditionalCompileInputs Include="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
+
+</Project>

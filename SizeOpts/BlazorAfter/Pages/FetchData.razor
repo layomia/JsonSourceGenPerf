@@ -37,8 +37,11 @@ else
 @code {
     private WeatherForecast[] forecasts;
 
+    private static JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+    private static JsonContext Context = new JsonContext(Options);
+
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json", Context);
     }
 }

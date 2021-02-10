@@ -1,14 +1,14 @@
 using System;
 using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization;
+using System.Text;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using BlazorAfter;
+using Microsoft.Extensions.Logging;
 
-[assembly: JsonSerializable(typeof(WeatherForecast[]))]
-
-namespace BlazorAfter
+namespace BlazorAfterNET6
 {
     public class Program
     {
@@ -21,17 +21,5 @@ namespace BlazorAfter
 
             await builder.Build().RunAsync();
         }
-    }
-
-    // Workaround since JSON code-gen doesn't handle nested classes well today.
-    public class WeatherForecast
-    {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 }

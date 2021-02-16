@@ -2,8 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,19 +11,13 @@
     <TrimMode>link</TrimMode>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <_TrimmerDumpDependencies>true</_TrimmerDumpDependencies>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <_ExtraTrimmerArgs>--feature System.Text.Json.DisableJsonSerializerDynamicFallback true</_ExtraTrimmerArgs>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="6.0.0-JsonCoGen.1.20574.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21110.6" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <Reference Include="D:\repos\dotnet_runtimelab_2\artifacts\bin\System.Text.Json\netcoreapp3.0-Release\System.Text.Json.dll" />
-    <ProjectReference Include="D:\repos\dotnet_runtimelab_2\src\libraries\System.Text.Json\System.Text.Json.SourceGeneration\System.Text.Json.SourceGeneration.csproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <OutputItemType>Analyzer</OutputItemType>
-    </ProjectReference>
-  </ItemGroup>-->
 
   <Target Name="ConfigureTrimming"
         BeforeTargets="PrepareForILLink">

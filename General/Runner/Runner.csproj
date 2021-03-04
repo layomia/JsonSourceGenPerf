@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>link</TrimMode>
-    <!--<SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>-->
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <_TrimmerDumpDependencies>true</_TrimmerDumpDependencies>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <_ExtraTrimmerArgs>--feature System.Text.Json.DisableJsonSerializerDynamicFallback true</_ExtraTrimmerArgs>

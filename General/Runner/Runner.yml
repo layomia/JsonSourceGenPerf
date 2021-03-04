@@ -1,0 +1,18 @@
+﻿jobs:
+  server:
+    source:
+      localFolder: .
+      project: Runner.csproj
+    readyStateText: Application started.
+
+scenarios:
+  runner:
+    application:
+      job: server
+
+profiles:
+  local:
+    jobs: 
+      application:
+        endpoints: 
+          - http://localhost:5010

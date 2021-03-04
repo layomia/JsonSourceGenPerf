@@ -1,15 +1,21 @@
-﻿jobs:
+﻿imports:
+    - https://raw.githubusercontent.com/dotnet/crank/master/src/Microsoft.Crank.Jobs.Bombardier/bombardier.yml
+
+jobs:
   server:
     source:
       localFolder: .
       project: Runner.csproj
     readyStateText: Application started.
+    waitForExit: true
+    isConsoleApp: true
 
 scenarios:
   runner:
     application:
       job: server
-
+      options:
+        collectCounters: true
 profiles:
   local:
     jobs: 

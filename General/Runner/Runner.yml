@@ -1,14 +1,10 @@
-﻿imports:
-    - https://raw.githubusercontent.com/dotnet/crank/master/src/Microsoft.Crank.Jobs.Bombardier/bombardier.yml
-
-jobs:
+﻿jobs:
   server:
     source:
       localFolder: .
       project: Runner.csproj
     readyStateText: Application started.
     waitForExit: true
-    isConsoleApp: true
 
 scenarios:
   runner:
@@ -22,3 +18,13 @@ profiles:
       application:
         endpoints: 
           - http://localhost:5010
+  remote-lin:
+    jobs: 
+      application:
+        endpoints: 
+          - http://asp-perf-lin:5001
+  remote-win:
+    jobs: 
+      application:
+        endpoints: 
+          - http://asp-perf-win:5001

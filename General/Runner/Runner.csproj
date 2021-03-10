@@ -3,26 +3,35 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants Condition="'$(RunningCrank)' == 'true'">$(DefineConstants);RUNNING_CRANK</DefineConstants>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
-
-  <PropertyGroup>
+    
+  <!--<PropertyGroup Condition="'$(RunningCrank)' != 'true'">
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>link</TrimMode>
     <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
     <_TrimmerDumpDependencies>true</_TrimmerDumpDependencies>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <_ExtraTrimmerArgs>--feature System.Text.Json.DisableJsonSerializerDynamicFallback true</_ExtraTrimmerArgs>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!--<ProjectReference Include="..\SerializationMechanismGenerator\SerializationMechanismGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
-    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21152.3" />
+    <_ExtraTrimmerArgs>feature System.Text.Json.DisableJsonSerializerDynamicFallback true</_ExtraTrimmerArgs>
+  </PropertyGroup>-->
+    
+  <ItemGroup Condition="'$(RunningCrank)' == 'true'">
+    <PackageReference Include="Microsoft.Crank.EventSources" Version="0.2.0-alpha.21151.2" />
+  </ItemGroup>
+    
+  <ItemGroup Condition="'$(UseMechanismGenerator)' == 'true'">
+    <ProjectReference Include="..\SerializationMechanismGenerator\SerializationMechanismGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <AdditionalFiles Include="Test.txt" />
   </ItemGroup>
 
-  <Target Name="ConfigureTrimming"
-          BeforeTargets="PrepareForILLink">
+  <ItemGroup Condition="'$(UseJsonGenerator)' == 'true'">
+    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21158.3" />
+    <!--<Reference Include="D:\repos\dotnet_runtimelab_2\artifacts\bin\System.Text.Json\netcoreapp3.0-Release\System.Text.Json.dll" />-->
+    <!--<Reference Include="D:\repos\dotnet_runtimelab_2\artifacts\bin\System.Text.Json.SourceGeneration\netstandard2.0-Release\System.Text.Json.SourceGeneration.dll" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
+  </ItemGroup>
+
+  <Target Condition="'$(RunningCrank)' != 'true'" Name="ConfigureTrimming" BeforeTargets="PrepareForILLink">
     <ItemGroup>
       <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Text.Json'">
         <IsTrimmable>true</IsTrimmable>

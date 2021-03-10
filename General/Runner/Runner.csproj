@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <DefineConstants Condition="'$(RunningCrank)' == 'true'">$(DefineConstants);RUNNING_CRANK</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
     
   <!--<PropertyGroup Condition="'$(RunningCrank)' != 'true'">

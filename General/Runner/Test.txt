@@ -1,4 +1,5 @@
-﻿1
+100
+4
 false
-Read
-DynamicSerializer
+Write
+Writer

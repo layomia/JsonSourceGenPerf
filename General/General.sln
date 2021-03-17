@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializationMechanismGenerator", "SerializationMechanismGenerator\SerializationMechanismGenerator.csproj", "{991B6AE4-A947-4842-894E-F179C3DB0955}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultProcessor", "ResultProcessor\ResultProcessor.csproj", "{73043BAE-1655-4939-ADC5-BCD6C39DA64E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{991B6AE4-A947-4842-894E-F179C3DB0955}.Release|x64.Build.0 = Release|Any CPU
 		{991B6AE4-A947-4842-894E-F179C3DB0955}.Release|x86.ActiveCfg = Release|Any CPU
 		{991B6AE4-A947-4842-894E-F179C3DB0955}.Release|x86.Build.0 = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|x64.Build.0 = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Debug|x86.Build.0 = Debug|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|x64.ActiveCfg = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|x64.Build.0 = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|x86.ActiveCfg = Release|Any CPU
+		{73043BAE-1655-4939-ADC5-BCD6C39DA64E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

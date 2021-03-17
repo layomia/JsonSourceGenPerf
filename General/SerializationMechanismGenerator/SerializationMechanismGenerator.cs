@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace SerializationMechanismGenerator
 {
     [Generator]
-    public class SerializationMechanismGenerator : ISourceGenerator
+    public sealed partial class SerializationMechanismGenerator : ISourceGenerator
     {
         private const string BenchmarkSerializationLogicFileName = "SerializationMechanism.cs";
 
@@ -39,12 +39,12 @@ namespace Runner
 
             BenchmarkSpecification specification = new();
             specification.NumPocos = int.Parse(lines[0].ToString());
-            specification.UseSerializationAttributes = bool.Parse(lines[1].ToString());
-            specification.Process = (JsonProcess)Enum.Parse(typeof(JsonProcess), lines[2].ToString());
-            specification.Processor = (JsonProcessor)Enum.Parse(typeof(JsonProcessor), lines[3].ToString());
+            specification.NumProps = int.Parse(lines[1].ToString());
+            specification.UseSerializationAttributes = bool.Parse(lines[2].ToString());
+            specification.Process = (JsonProcess)Enum.Parse(typeof(JsonProcess), lines[3].ToString());
+            specification.Processor = (JsonProcessor)Enum.Parse(typeof(JsonProcessor), lines[4].ToString());
 
-            if (specification.UseSerializationAttributes &&
-                (specification.Processor == JsonProcessor.Reader || specification.Processor == JsonProcessor.Writer))
+            if (!SpecificationIsValid(specification))
             {
                 context.AddSource(BenchmarkSerializationLogicFileName, InvalidSepcificationSourceText);
                 return;
@@ -53,19 +53,50 @@ namespace Runner
             GenerateBenchmarkImplementation(context, specification);
         }
 
+        private static bool SpecificationIsValid(in BenchmarkSpecification specification)
+        {
+            // TODO: account for other invalid configurations.
+
+            if (specification.UseSerializationAttributes &&
+                (specification.Processor == JsonProcessor.Reader || specification.Processor == JsonProcessor.Writer))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private static void GenerateBenchmarkImplementation(in GeneratorExecutionContext context, in BenchmarkSpecification specification)
         {
             context.AddSource("TestClasses.cs", SourceText.From(
-                GetTestClasses(specification.NumPocos, specification.UseSerializationAttributes, specification.Processor == JsonProcessor.MetadataSerializer),
+                GetTestClasses(specification),
                 Encoding.UTF8));
 
             context.AddSource(BenchmarkSerializationLogicFileName, SourceText.From(
                 GetSerializationLogic(specification),
                 Encoding.UTF8));
+
+            if (specification.Processor == JsonProcessor.Writer)
+            {
+                context.AddSource("PooledByteBufferWriter.cs", SourceText.From(
+                    PooledByteBufferWriterSource,
+                    Encoding.UTF8));
+            }
+            else if (specification.Processor == JsonProcessor.Reader)
+            {
+                context.AddSource("Helper.cs", SourceText.From(
+                    ReadHelperClassSource,
+                    Encoding.UTF8));
+            }
         }
 
-        private static string GetTestClasses(int numPocos, bool useSerializationAttributes, bool usingMetadataSerializer)
+        private static string GetTestClasses(in BenchmarkSpecification specification)
         {
+            int numPocos = specification.NumPocos;
+            int numProps = specification.NumProps;
+            bool useSerializationAttributes = specification.UseSerializationAttributes;
+            bool usingMetadataSerializer = specification.Processor == JsonProcessor.MetadataSerializer;
+
             StringBuilder sb = new();
             sb.Append(@"using System;
 using System.Text.Json.Serialization;
@@ -93,20 +124,29 @@ namespace Runner
     internal class MyClass{i}
     {{{DisplayAttribute("[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]")}
         public int MyInt {{ get; set; }} = 5;
+        ");
+
+                if (numProps == 4)
+                {
+                    sb.Append($@"
         {DisplayAttribute("[JsonInclude]")}
         public string MyString {{ get; internal set; }} = ""Hello world"";
         {DisplayAttribute("[JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]")}
         public float MyFloat {{ get; set; }} = 5;
         {DisplayAttribute(@"[JsonPropertyName(""Bool"")]")}
         public bool MyBool {{ get; set; }} = true;
-    }}");
+    ");
+                }
+
+                sb.Append(@"
+    }");
             }
 
             sb.Append(@"
 }
 ");
 
-            string DisplayAttribute(string attribute) => useSerializationAttributes ? $"\n        {attribute}" : "\n";
+            string DisplayAttribute(string attribute) => useSerializationAttributes ? $"\n        {attribute}" : "";
 
             return sb.ToString();
         }
@@ -148,11 +188,16 @@ namespace Runner
                         Debug.Assert(specification.Process == JsonProcess.Write && !specification.UseSerializationAttributes);
 
                         sb.Append(@"
-            JsonEncodedText MyIntText = JsonEncodedText.Encode(""MyInt"", encoder: null);
+            JsonEncodedText MyIntText = JsonEncodedText.Encode(""MyInt"", encoder: null);");
+
+                        if (specification.NumProps == 4)
+                        {
+                            sb.Append(@"
             JsonEncodedText MyStringText = JsonEncodedText.Encode(""MyString"", encoder: null);
             JsonEncodedText MyFloatText = JsonEncodedText.Encode(""MyFloat"", encoder: null);
             JsonEncodedText MyBoolText = JsonEncodedText.Encode(""MyBool"", encoder: null);
 ");
+                        }
 
                         for (int i = 0; i < specification.NumPocos; i++)
                         {
@@ -166,10 +211,17 @@ namespace Runner
 
                     MyClass{i} {objInstanceVarName} = new();
                     writer.WriteStartObject();
-                    writer.WriteNumber(MyIntText, {objInstanceVarName}.MyInt);
+                    writer.WriteNumber(MyIntText, {objInstanceVarName}.MyInt);");
+
+                            if (specification.NumProps == 4)
+                            {
+                                sb.Append(@$"
                     writer.WriteString(MyStringText, {objInstanceVarName}.MyString);
                     writer.WriteNumber(MyFloatText, {objInstanceVarName}.MyFloat);
-                    writer.WriteBoolean(MyBoolText, {objInstanceVarName}.MyBool);
+                    writer.WriteBoolean(MyBoolText, {objInstanceVarName}.MyBool);");
+                            }
+
+                            sb.Append(@$"
                     writer.WriteEndObject();
                 }}
             }}
@@ -193,6 +245,7 @@ namespace Runner
         private static string GetSerializationLogicUsingJsonSerializer(in BenchmarkSpecification specification)
         {
             int numPocos = specification.NumPocos;
+            int numProps = specification.NumProps;
             JsonProcess process = specification.Process;
             JsonProcessor processor = specification.Processor;
             bool useSerializationAttributes = specification.UseSerializationAttributes;
@@ -205,7 +258,7 @@ namespace Runner
             {
                 case JsonProcess.Read:
                     {
-                        sb.Append(GetJsonToRead(useSerializationAttributes));
+                        sb.Append(GetJsonToRead(numProps, useSerializationAttributes));
 
                         for (int i = 0; i < numPocos; i++)
                         {
@@ -234,16 +287,21 @@ namespace Runner
         {
             StringBuilder sb = new();
 
-            sb.Append(GetJsonToRead(useSerializationAttributes: false));
+            sb.Append(GetJsonToRead(specification.NumProps, useSerializationAttributes: false));
 
             sb.Append(@"
-            const ulong MyIntKey = 360288470256154957;
+            Utf8JsonReader reader;
+
+            const ulong MyIntKey = 360288470256154957;");
+
+            if (specification.NumProps == 4)
+            {
+                sb.Append(@"
             const ulong MyStringKey = 607538940040411469;
             const ulong MyFloatKey = 537161386749753677;
             const ulong MyBoolKey = 432464790091364685;
-
-            Utf8JsonReader reader;
 ");
+            }
 
             for (int i = 0; i < specification.NumPocos; i++)
             {
@@ -270,7 +328,11 @@ namespace Runner
                 {{
                     case MyIntKey:
                         {objInstanceVarName}.MyInt = reader.GetInt32();
-                        break;
+                        break;");
+                
+                if (specification.NumProps == 4)
+                {
+                    sb.Append($@"
                     case MyStringKey:
                         {objInstanceVarName}.MyString = reader.GetString();
                         break;
@@ -279,7 +341,10 @@ namespace Runner
                         break;
                     case MyBoolKey:
                         {objInstanceVarName}.MyBool = reader.GetBoolean();
-                        break;
+                        break;");
+                }
+                
+                sb.Append($@"
                     default:
                         break;
                 }}
@@ -290,22 +355,23 @@ namespace Runner
             return sb.ToString();
         }
 
-        private static string GetJsonToRead(bool useSerializationAttributes)
+        private static string GetJsonToRead(int numProps, bool useSerializationAttributes)
         {
             StringBuilder sb = new();
 
             string json;
-
-            //if (useSerializationAttributes)
-            //{
-            //    json = @"{""MyFloat"":5,""Bool"":true,""MyInt"":5,""MyString"":""Hello world""}";
-            //}
-            //else
-            //{
-            //    json = @"{""MyFloat"":5,""MyBool"":true,""MyInt"":5,""MyString"":""Hello world""}";
-            //}
-
-            json = @"{""MyInt"":5}";
+            if (numProps == 1)
+            {
+                json = @"{""MyInt"":5}";
+            }
+            else if (useSerializationAttributes)
+            {
+                json = @"{""MyFloat"":""5"",""Bool"":true,""MyInt"":5,""MyString"":""Hello world""}";
+            }
+            else
+            {
+                json = @"{""MyFloat"":5,""MyBool"":true,""MyInt"":5,""MyString"":""Hello world""}";
+            }
 
             byte[] jsonAsByteArray = Encoding.UTF8.GetBytes(json);
 
@@ -329,6 +395,8 @@ namespace Runner
         private struct BenchmarkSpecification
         {
             public int NumPocos { get; set; }
+
+            public int NumProps { get; set; }
 
             public bool UseSerializationAttributes { get; set; }
 

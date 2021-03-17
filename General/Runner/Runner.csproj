@@ -26,8 +26,8 @@
     <AdditionalFiles Include="Test.txt" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(UseJsonGenerator)' == 'true'">
-    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21158.3" />
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21162.5" />
     <!--<Reference Include="D:\repos\dotnet_runtimelab_2\artifacts\bin\System.Text.Json\netcoreapp3.0-Release\System.Text.Json.dll" />-->
     <!--<Reference Include="D:\repos\dotnet_runtimelab_2\artifacts\bin\System.Text.Json.SourceGeneration\netstandard2.0-Release\System.Text.Json.SourceGeneration.dll" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
   </ItemGroup>

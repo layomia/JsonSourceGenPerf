@@ -13,24 +13,24 @@ namespace Runner
         {
 #if RUNNING_CRANK
             Console.WriteLine("Application started.");
-            //Stopwatch sw = new();
-            //sw.Start();
+            Stopwatch sw = new();
+            sw.Start();
 #endif
-            //SerializationMechanism.RunBenchmark();
+            SerializationMechanism.RunBenchmark();
 #if RUNNING_CRANK
-            //sw.Stop();
+            sw.Stop();
 
-            //Process process = Process.GetCurrentProcess();
-            //process.Refresh();
+            Process process = Process.GetCurrentProcess();
+            process.Refresh();
 
-            //Console.WriteLine(privateMemory);
+            //Console.WriteLine(process.PrivateMemorySize64 / 1024);
             //Console.WriteLine(sw.ElapsedMilliseconds);
 
-            //BenchmarksEventSource.Register("runtime/privatebytes", Operations.First, Operations.First, "Private bytes (KB)", "Private bytes (KB)", "n0");
-            //BenchmarksEventSource.Measure("runtime/privatebytes", process.PrivateMemorySize64 / 1024);
+            BenchmarksEventSource.Register("runtime/private-bytes", Operations.First, Operations.First, "Private bytes (KB)", "Private bytes (KB)", "n0");
+            BenchmarksEventSource.Measure("runtime/private-bytes", process.PrivateMemorySize64 / 1024);
 
-            //BenchmarksEventSource.Register("application/elapsedtime", Operations.First, Operations.First, "Elapsed time (ms)", "Elasped time (ms)", "n0");
-            //BenchmarksEventSource.Measure("application/elapsedtime", sw.ElapsedMilliseconds);
+            BenchmarksEventSource.Register("application/elapsed-time", Operations.First, Operations.First, "Elapsed time (ms)", "Elasped time (ms)", "n0");
+            BenchmarksEventSource.Measure("application/elapsed-time", sw.ElapsedMilliseconds);
 
             //Thread.Sleep(2000);
 #endif

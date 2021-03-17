@@ -8,9 +8,13 @@
 scenarios:
   runner:
     application:
+      framework: net6.0
       job: server
       options:
         collectCounters: true
+        displayoutput: true
+        outputfiles: C:\Users\laakinri.NORTHAMERICA\Desktop\SrcGenPerf\System.Text.Json.dll
+      sdkversion: 6.0.100-preview.3.21162.43
 profiles:
   local:
     jobs: 
@@ -28,9 +32,18 @@ profiles:
         endpoints: 
           - http://asp-perf-win:5001
 scripts:
-    adjust_start_time_win: |
-        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 500;
-        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 500;
-    adjust_start_time_lin: |
-        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 500;
-        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 500;
+    adjust_counters_win: |
+        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 107;
+        if (benchmarks.jobs.application.results["benchmarks/start-time"] < 0) {
+            benchmarks.jobs.application.results["benchmarks/start-time"] = 0;
+        }
+
+        benchmarks.jobs.application.results["runtime/private-bytes"] = benchmarks.jobs.application.results["runtime/private-bytes"] - 8316;
+        if (benchmarks.jobs.application.results["runtime/private-bytes"] < 0) {
+            benchmarks.jobs.application.results["runtime/private-bytes"]  = 0;
+        }
+
+        benchmarks.jobs.application.results["application/net-start-time"]  = benchmarks.jobs.application.results["benchmarks/start-time"] + benchmarks.jobs.application.results["application/elapsed-time"]
+    adjust_counters_lin: |
+        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 70;
+        benchmarks.jobs.application.results["runtime/privatebytes"] = benchmarks.jobs.application.results["runtime/privatebytes"] - 82644;

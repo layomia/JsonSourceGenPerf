@@ -113,6 +113,8 @@ for num_poco_option in num_poco_options:
 						--profile remote-win \
 						--script adjust_counters_win \
 						--iterations 10 \
+						--exclude 4 \
+						--exclude-order load:wrk/rps/mean \
 						--output {} \
 					'.format(result_path)
 

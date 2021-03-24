@@ -11,14 +11,16 @@ namespace ConsoleAfter
     {
         static void Main(string[] args)
         {
-            byte[] json = JsonSerializer.SerializeToUtf8Bytes(new MyClass { MyInt = 1 }, JsonContext.Instance.MyClass);
+            byte[] json = JsonSerializer.SerializeToUtf8Bytes(new MyClass { MyInt = 1, MyString = "Hello" }, JsonContext.Instance.MyClass);
             MyClass obj = JsonSerializer.Deserialize(json, JsonContext.Instance.MyClass);
             Console.WriteLine(obj.MyInt);
+            Console.WriteLine(obj.MyString);
         }
     }
 
     public class MyClass
     {
         public int MyInt { get; set; }
+        public string MyString { get; set; }
     }
 }

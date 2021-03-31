@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants Condition="'$(Process)' == 'Serialize'">$(DefineConstants);SERIALIZE</DefineConstants>
+    <DefineConstants Condition="'$(Processor)' == 'Dynamic'">$(DefineConstants);SERIALIZER_OLD</DefineConstants>
+    <DefineConstants Condition="'$(Processor)' == 'Metadata'">$(DefineConstants);SERIALIZER_NEW</DefineConstants>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!--<MicrosoftNetCompilersToolsetVersion>3.10.0-1.final</MicrosoftNetCompilersToolsetVersion>-->
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Linker settings. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--<PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21179.7" />-->
+    <Reference Include=".\System.Text.Json.dll" />
+  </ItemGroup>
+
+  <Target Name="ConfigureTrimming" BeforeTargets="PrepareForILLink">
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Text.Json'">
+        <IsTrimmable>true</IsTrimmable>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
+
+</Project>

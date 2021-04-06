@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,9 +7,8 @@
     <DefineConstants Condition="'$(Processor)' == 'Dynamic'">$(DefineConstants);SERIALIZER_OLD</DefineConstants>
     <DefineConstants Condition="'$(Processor)' == 'Metadata'">$(DefineConstants);SERIALIZER_NEW</DefineConstants>
     <DefineConstants Condition="'$(Processor)' == 'MetadataDirect'">$(DefineConstants);SOURCE_GEN_DIRECT</DefineConstants>
-    <DefineConstants Condition="'$(Processor)' == 'MetadataDirectByteArray'">$(DefineConstants);SOURCE_GEN_DIRECT_BYTEARRAY</DefineConstants>
-    <DefineConstants Condition="'$(Processor)' == 'LowLevelByteArray'">$(DefineConstants);LOW_LEVEL_BYTEARRAY</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!--<MicrosoftNetCompilersToolsetVersion>3.10.0-1.final</MicrosoftNetCompilersToolsetVersion>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21204.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21203.3" />
     <!--<Reference Include=".\System.Text.Json.dll" />-->
   </ItemGroup>
 

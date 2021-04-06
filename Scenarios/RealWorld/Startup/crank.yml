@@ -1,0 +1,39 @@
+jobs:
+  startup:
+    source:
+      localFolder: .
+      project: Startup.csproj
+    readyStateText: Application started.
+    waitForExit: true
+scenarios:
+  startup:
+    application:
+      framework: net6.0
+      job: startup
+      options:
+        collectCounters: true
+        displayoutput: true
+profiles:
+  local:
+    jobs: 
+      application:
+        endpoints: 
+          - http://localhost:5010
+  remote-win:
+    jobs: 
+      application:
+        endpoints: 
+          - http://asp-perf-win:5001
+scripts:
+    adjust_counters_win: |
+        benchmarks.jobs.application.results["benchmarks/start-time"] = benchmarks.jobs.application.results["benchmarks/start-time"] - 107;
+        if (benchmarks.jobs.application.results["benchmarks/start-time"] < 0) {
+            benchmarks.jobs.application.results["benchmarks/start-time"] = 0;
+        }
+
+        benchmarks.jobs.application.results["runtime/private-bytes"] = benchmarks.jobs.application.results["runtime/private-bytes"] - 8,740;
+        if (benchmarks.jobs.application.results["runtime/private-bytes"] < 0) {
+            benchmarks.jobs.application.results["runtime/private-bytes"]  = 0;
+        }
+
+        benchmarks.jobs.application.results["application/net-start-time"]  = benchmarks.jobs.application.results["benchmarks/start-time"] + benchmarks.jobs.application.results["application/elapsed-time"]

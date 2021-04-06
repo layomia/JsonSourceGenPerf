@@ -8,10 +8,22 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-    <!--<PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21173.1" />-->
+    <PackageReference Include="System.Text.Json" Version="6.0.1-JsonCoGen.1.21204.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include=".\System.Text.Json.dll" />
-  </ItemGroup>
+  <PropertyGroup>
+    <!-- Linker settings. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>link</TrimMode>
+  </PropertyGroup>
+
+  <Target Name="ConfigureTrimming" BeforeTargets="PrepareForILLink">
+    <ItemGroup>
+      <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Text.Json'">
+        <IsTrimmable>true</IsTrimmable>
+      </ManagedAssemblyToLink>
+    </ItemGroup>
+  </Target>
 </Project>

@@ -1,0 +1,28 @@
+jobs:
+  benchmarks:
+    source:
+      localFolder: .
+      project: Throughput.csproj
+    variables:
+      filter: "*"
+      job: default
+      warmupCount: 3
+      iterationCount: 10
+    arguments: --job {{job}} --filter {{filter}} --warmupCount {{warmupCount}} --iterationCount {{iterationCount}} --memory
+    options:
+      benchmarkDotNet: true
+scenarios:
+  throughput:
+    application:
+      job: benchmarks
+profiles:
+  local:
+    jobs: 
+      application:
+        endpoints: 
+          - http://localhost:5010
+  remote-win:
+    jobs: 
+      application:
+        endpoints: 
+          - http://asp-perf-win:5001
